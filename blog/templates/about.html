@@ -1,0 +1,68 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- +++++ Welcome Section +++++ -->
+  <div id="ww">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 centered">
+          <img src="{{g.owner.avatar(200)}}" alt="{{g.owner.nickname}}" class="img-circle">
+          <h1>About {{g.owner.nickname}}!</h1>
+          <p>{{g.owner.about_me}}</p>
+        </div><!-- /col-lg-8 -->
+      </div><!-- /row -->
+    </div> <!-- /container -->
+  </div><!-- /ww -->
+  
+  
+  <!-- +++++ Information Section +++++ -->
+  
+  <div class="container pt">
+    <div class="row mt centered">  
+      <div class="col-lg-3">
+        <span class="glyphicon glyphicon-book"></span>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+      </div>
+      
+      <div class="col-lg-3">
+        <span class="glyphicon glyphicon-user"></span>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+      </div>
+
+      <div class="col-lg-3">
+        <span class="glyphicon glyphicon-fire"></span>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+      </div>
+
+      <div class="col-lg-3">
+        <span class="glyphicon glyphicon-globe"></span>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+      </div>
+    </div><!-- /row -->
+    
+    <div class="row mt">
+      <div class="col-lg-6">
+        <h4>THE THINKING</h4>
+        <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+      </div><!-- /colg-lg-6 -->
+      
+      <div class="col-lg-6">
+        <h4>THE SKILLS</h4>
+        {% if g.owner.skills %}
+          {% for skill in g.owner.skills%}
+            {{skill.name}}
+            <div class="progress">
+              <div class="progress-bar progress-bar-theme" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{skill.value}}%;">
+                <span class="sr-only">60% Complete</span>
+              </div>
+            </div>
+          {% end %}
+        {% end %}
+      </div><!-- /col-lg-6 -->
+    </div><!-- /row -->
+  </div><!-- /container -->
+
+{% end %}
+  
+  

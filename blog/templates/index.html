@@ -1,0 +1,46 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- +++++ Welcome Section +++++ -->
+  <div id="ww">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 centered">
+          <img src="{{g.owner.avatar(300)}}" alt="{{g.owner.nickname}}" class="img-circle">
+          <h1>Hi, I am {{g.owner.nickname}}!</h1>
+          {% if g.owner.about_me %}<p>{{g.owner.about_me}}</p>{% end %}
+          {% if g.owner.last_seen %}<p>Last seen on: {% raw  momentjs(g.owner.last_seen).calendar() %}</p>{% end %}
+          </form>
+        </div><!-- /col-lg-8 -->
+      </div><!-- /row -->
+    </div> <!-- /container -->
+    <div class="container">
+      <div class="row centered">
+        <h3>MY SKILLS</h3>
+        {% if g.owner.skills %}
+          {% for skill in g.owner.skills %}
+            <div class="col-lg-3 mt">
+              <canvas id="{{skill.name}}" height="130" width="130"></canvas>
+              <p>{{skill.name}}</p>
+              <br>
+              <script>
+                var doughnutData = [
+                  {
+                    value: {{skill.value}},
+                    color:"#74cfae"
+                  },
+                  {
+                    value : {{100 - skill.value}},
+                    color : "#3c3c3c"
+                  }
+                ];
+                var myDoughnut = new Chart(document.getElementById("{{skill.name}}").getContext("2d")).Doughnut(doughnutData);
+              </script>   
+            </div>
+          {% end %}
+        {% end %}
+      </div><!-- /row -->
+    </div><!-- /container -->
+  </div><!-- /skills -->
+{% end %}

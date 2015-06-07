@@ -1,0 +1,45 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- Posts Lists -->
+  <div id="grey">
+    <div class="container">
+       {% for post in posts.items%}
+           <div class="row">
+             <div class="col-lg-8 col-lg-offset-2">
+               <p><a href="/about"><img src="{{post.author.avatar(70)}}" alt="{{post.author.nickname}}" class="img-circle"></a><ba><a href="/about">{{post.author.nickname}}</a></ba></p>
+               <p>{% raw momentjs(post.create_time).calendar() %}</p><p class="text-right">times of reading :6</p>
+               <h4>{{post.title}}</h4>
+               {% if post.content.__len__() > 300 %}
+                 <p> {% raw post.content[:300] %} ......</p>
+               {% else %}
+                 <p>{% raw post.content %} </p>
+               {% end %}
+               {% if post.comments %}
+                 <p class="text-right">comments {{ post.comments.__len__() }}</p>
+               {% end %}
+               <p><a href="">Continue Reading...</a></p>   
+               {% if post.modified_time != post.create_time %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
+               <hr>
+             </div>
+           </div><!-- /row -->
+       {% end %}
+       <div class="row">
+         <div class="col-lg-8 col-lg-offset-2">
+       {% if posts.has_prev %}
+       <a href="/blog/{{posts.prev_num}}"><< Newer posts </a>
+       {% else %}
+         << Newer posts
+       {% end %}
+       {% if posts.has_next %}
+       <p class="text-right"><a href="/blog/{{posts.next_num}}">Older post >> </a></p>
+       {% else %}
+          <p class="text-right">Older post >></p>
+       {% end %}
+         </div>
+       </div><!-- /row -->
+    </div> <!-- /container -->
+  </div><!-- /grey -->
+    
+{% end %}

@@ -1,0 +1,41 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- +++++ Post +++++ -->
+  <script charset="utf-8" src="/static/kindeditor/kindeditor-min.js"></script>
+  <script charset="utf-8" src="/static/kindeditor/zh_CN.js"></script>
+  <script charset="utf-8" src="/static/js/bootstrap-wysiwyg.js"></script>
+  <script>
+    var editor;
+    KindEditor.ready(function(K){
+        editor = K.create('#editor_id');
+    });
+  </script>
+  <div id='grey'>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <form action="" method = "post" class = "class="well"" >
+            {{ form.hidden_tag()}}
+            {{ form.title(placeholder="title", class_ = "form-control") }} 
+            {% for error in form.errors.title %}
+              <span class="help-inline">[{{error}}]</span><br>
+            {% endfor %}
+            <br>
+            {{ form.content(placeholder="text", class_ = "form-control", id = "editor_id",rows="10") }}
+            {% for error in form.errors.content %}
+              <span class="help-inline">[{{error}}]</span><br>
+            {% endfor %}
+            <br>
+            {{ form.category(placeholder="category_name", class_ = "form-control") }}
+            {% for error in form.errors.category %}
+              <span class="help-inline">[{{error}}]</span><br>
+            {% endfor %}
+            <button type="submit" class="btn btn-success">SUBMIT</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

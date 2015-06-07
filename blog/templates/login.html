@@ -1,0 +1,30 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+
+      <form class="form-signin" role="form" action="" method = "post">
+        {% module xsrf_form_html() %}
+        <h2 class="form-signin-heading">Please sign in</h2>
+
+        {% raw form.email(class_="form-control", placeholder="Email address") %}
+        {% for error in form.errors.get('email', []) %} 
+        <span class="help-inline">{% raw error %}</span><br>
+        {% end %}
+        {% raw form.password(type="password", class_="form-control", placeholder="Password") %}
+        {% for error in form.errors.get('password', []) %}
+        <span class="help-inline">{% raw error %}</span><br>
+        {% end %}
+        {% raw form.remember_me(type="checkbox") %}Remember me
+    
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+    </div> <!-- /container -->
+  </body>
+  </html>
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+{% end %}
