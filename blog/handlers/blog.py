@@ -3,14 +3,18 @@
     ~~~~~~~
     blog handlers
 """
-# import markdown
-# import tornado.web
+import markdown
+import tornado.web
 from tornado import gen
 from datetime import datetime
 from operator import itemgetter
 from handlers.base import BaseHandler
-from models import User, Post
-from forms import LoginForm
+from models import User, Post, Category
+from forms import LoginForm, ComposeForm
+
+__all__ = ["MainHandler", "IndexHandler", "BlogHandler", "AboutHandler",
+           "ComposeHandler", "LoginHandler", "LogoutHandler",
+           "NoDestinationHandler", ]
 
 
 class MainHandler(BaseHandler):
@@ -62,6 +66,58 @@ class AboutHandler(MainHandler):
         self.render("about.html")
 
 
+class ComposeHandler(MainHandler):
+    def __init__(self, *args,  **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form = ComposeForm(self.request.arguments)
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def get(self, title):
+        post = yield Post.asyncQuery().filter(title=title).first()
+        if post:
+            self.form.title.data = post.title
+            self.form.content.data = post.content
+            self.form.markdown.data = post.markdown
+            self.form.category.data = post.category.name
+            self.form.tags.data = ','.join(post.tags)
+        self.render("compose.html", form=self.form)
+
+    @tornado.web.authenticated
+    @gen.coroutine
+    def post(self, title):
+        if self.form.validate():
+            post = yield Post.asyncQuery().filter(
+                title=self.form.title.data).first()
+
+            if post:
+                post.modified_time = datetime.utcnow()
+            else:
+                post = Post()
+
+            title = self.form.title.data.replace(' ', '-')
+            content = markdown.markdown(self.form.markdown.data) if \
+                self.form.markdown.data else self.form.content.data
+            markdown_text = self.form.markdown.data
+            category = yield Category.asyncQuery().filter(
+                name=self.form.category.data).first()
+            if not category:
+                category = Category()
+                category.name = self.form.category.data
+                yield category.save()
+
+            post.title = title
+            post.content = content
+            post.markdown = markdown_text
+            post.category = category
+            post.tags = self.form.tags.data.split(',')
+            post.author = self.current_user
+            yield post.save()
+            self.flash("compose finsh!")
+            return self.redirect('/blog')
+        self.render("compose.html", form=self.form)
+
+
 class LoginHandler(MainHandler):
     def __init__(self, *args,  **kwargs):
         super().__init__(*args, **kwargs)
@@ -90,7 +146,7 @@ class LoginHandler(MainHandler):
                         self.set_secure_cookie("user", user.email,
                                                expires_days=None)
                     self.flash('welcome back!')
-                    return self.redirect('/')
+                    return self.redirect(self.get_argument("next", "/"))
             self.flash('Invalid email or passwd')
         self.render("login.html", form=self.form)
 

@@ -7,10 +7,11 @@ import os
 from handlers import (
     IndexHandler,
     BlogHandler,
+    AboutHandler,
+    ComposeHandler,
     LoginHandler,
     LogoutHandler,
     NoDestinationHandler,
-    AboutHandler
 )
 
 # tornado handlers
@@ -18,6 +19,7 @@ handlers = [
     (r"/", IndexHandler),
     (r"/blog/?(\d+)?/?", BlogHandler),
     (r"/about/?", AboutHandler),
+    (r"/compose/?(\S+)?/?", ComposeHandler),
     (r"/admin/login", LoginHandler),
     (r"/admin/logout", LogoutHandler),
     # (r"/archive/(?<archive_id>d+)", ArchiveHandler),

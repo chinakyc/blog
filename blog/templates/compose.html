@@ -16,26 +16,36 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-lg-offset-2">
-          <form action="" method = "post" class = "class="well"" >
-            {{ form.hidden_tag()}}
-            {{ form.title(placeholder="title", class_ = "form-control") }} 
-            {% for error in form.errors.title %}
-              <span class="help-inline">[{{error}}]</span><br>
-            {% endfor %}
+            <form action="{{ request.path }}" method = "post" class="well"" >
+            {% module xsrf_form_html() %}
+            {% raw form.title(placeholder="title", class_ = "form-control") %} 
+            {% for error in form.errors.get('title', []) %}
+              <span class="help-inline">{% raw error %}</span><br>
+            {% end %}
             <br>
-            {{ form.content(placeholder="text", class_ = "form-control", id = "editor_id",rows="10") }}
-            {% for error in form.errors.content %}
-              <span class="help-inline">[{{error}}]</span><br>
-            {% endfor %}
+            {% raw form.content(placeholder="text", class_ = "form-control", id = "editor_id",rows="10") %}
+            {% for error in form.errors.get('content', []) %}
+              <span class="help-inline">{% raw error %}</span><br>
+            {% end %}
             <br>
-            {{ form.category(placeholder="category_name", class_ = "form-control") }}
-            {% for error in form.errors.category %}
-              <span class="help-inline">[{{error}}]</span><br>
-            {% endfor %}
+            {% raw form.markdown(placeholder="markdown", class_ = "form-control", id = "editor_id",rows="10") %}
+            {% for error in form.errors.get('markdown', []) %}
+              <span class="help-inline">{% raw error %}</span><br>
+            {% end %}
+            <br>
+            {% raw form.tags(placeholder="tags,web,http,", class_ = "form-control") %}
+            {% for error in form.errors.get('tags', []) %}
+              <span class="help-inline">{% raw error %}</span><br>
+            {% end %}
+            <br>
+            {% raw form.category(placeholder="category", class_ = "form-control") %}
+            {% for error in form.errors.get('category', []) %}
+              <span class="help-inline">{% raw error %}</span><br>
+            {% end %}
             <button type="submit" class="btn btn-success">SUBMIT</button>
           </form>
         </div>
       </div>
     </div>
   </div>
-{% endblock %}
+{% end %}

@@ -69,14 +69,23 @@ class Comment(EmbeddedDocument):
         return '<Comment %r>' % (self.create_time)
 
 
+class Category(Custom_Document):
+    name = StringField(required=True)
+
+    def __repr__(self):
+        return '<Category %r>' % (self.name)
+
+
 class Post(Custom_Document):
-    title = StringField(required=True, max_length=120)
+    title = StringField(required=True, unique=True, max_length=120)
     content = StringField(required=True)
+    markdown = StringField()
     author = ReferenceField(User, reverse_delete_rule=CASCADE)
-    create_time = DateTimeField(default=datetime.datetime.utcnow())
-    modified_time = DateTimeField(default=datetime.datetime.utcnow())
+    category = ReferenceField(Category, reverse_delete_rule=CASCADE)
     comments = ListField(EmbeddedDocumentField(Comment))
     tags = ListField(StringField(max_length=50))
+    create_time = DateTimeField(default=datetime.datetime.utcnow())
+    modified_time = DateTimeField(default=datetime.datetime.utcnow())
 
     def __repr__(self):
         return '<Post %r>' % (self.title)
