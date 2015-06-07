@@ -3,12 +3,14 @@
     ~~~~~~~
     blog handlers
 """
+# import markdown
+# import tornado.web
 from tornado import gen
-from forms import LoginForm
 from datetime import datetime
-from models import User, Post
 from operator import itemgetter
 from handlers.base import BaseHandler
+from models import User, Post
+from forms import LoginForm
 
 
 class MainHandler(BaseHandler):
@@ -27,7 +29,6 @@ class MainHandler(BaseHandler):
 
 
 class IndexHandler(MainHandler):
-    @gen.coroutine
     def get(self):
 
         # This page requires special `owner.skills` order.
@@ -50,7 +51,6 @@ class BlogHandler(MainHandler):
 
 
 class AboutHandler(MainHandler):
-    @gen.coroutine
     def get(self):
 
         # This page requires special `owner.skills` order.
