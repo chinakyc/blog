@@ -64,7 +64,14 @@ class CustomMixin(object):
         """overridden `submit` return `CustomFuture` instead `Future`"""
         cF = CustomFuture()
         f = super().submit(fn, *args, **kwargs)
-        f.add_done_callback(lambda f: cF.set_result(f.result()))
+
+        def _set_customFuture_result(f):
+            try:
+                cF.set_result(f.result())
+            except Exception as e:
+                cF.set_exception(e)
+
+        f.add_done_callback(_set_customFuture_result)
         return cF
 
 
