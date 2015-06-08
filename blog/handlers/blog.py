@@ -3,17 +3,17 @@
     ~~~~~~~
     blog handlers
 """
-import markdown
+import markdown2
 import tornado.web
 from tornado import gen
 from datetime import datetime
 from operator import itemgetter
 from handlers.base import BaseHandler
-from models import User, Post, Category
-from forms import LoginForm, ComposeForm
+from models import User, Post, Category, Comment
+from forms import LoginForm, ComposeForm, CommentForm
 
 __all__ = ["MainHandler", "IndexHandler", "BlogHandler", "AboutHandler",
-           "ComposeHandler", "LoginHandler", "LogoutHandler",
+           "ComposeHandler", "LoginHandler", "LogoutHandler", "PostHandler",
            "NoDestinationHandler", ]
 
 
@@ -49,9 +49,42 @@ class BlogHandler(MainHandler):
     def get(self, page):
         if not page:
             page = 1
-        posts = yield Post.asyncQuery().paginate(
+        posts = yield Post.asyncQuery().order_by("-create_time").paginate(
             page=int(page), per_page=self.settings['per_page'])
         self.render("blog.html", posts=posts)
+
+
+class PostHandler(MainHandler):
+    def __init__(self, *args,  **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form = CommentForm(self.request.arguments)
+
+    @gen.coroutine
+    def get(self, title):
+        post = yield Post.asyncQuery().filter(title=title).first()
+        if not post:
+            raise tornado.web.HTTPError(404)
+        self.render("post.html", post=post, form=self.form)
+
+    @gen.coroutine
+    def post(self, title):
+        post = yield Post.asyncQuery().filter(title=title).first()
+        if not post:
+            raise tornado.web.HTTPError(404)
+        if self.form.validate():
+            comment = Comment()
+            comment.author_name = self.form.author_name.data
+            comment.author_email = self.form.author_email.data
+            comment.author_url = self.form.author_url.data
+            comment.content = markdown2.markdown(
+                self.form.content.data, extras=[
+                    "fenced-code-blocks", "pyshell"])
+            post.comments.append(comment)
+            yield post.save()
+            self.flash("评论提交成功~")
+            return self.redirect("{path}{id}".format(
+                path=self.request.path, id="#comment"))
+        self.render("post.html", post=post, form=self.form)
 
 
 class AboutHandler(MainHandler):
@@ -96,7 +129,9 @@ class ComposeHandler(MainHandler):
                 post = Post()
 
             title = self.form.title.data.replace(' ', '-')
-            content = markdown.markdown(self.form.markdown.data) if \
+            content = markdown2.markdown(
+                self.form.markdown.data, extras=[
+                    "fenced-code-blocks", "footnotes", "pyshell", "tables"]) if \
                 self.form.markdown.data else self.form.content.data
             markdown_text = self.form.markdown.data
             category = yield Category.asyncQuery().filter(
