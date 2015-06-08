@@ -11,6 +11,7 @@ from handlers import (
     ComposeHandler,
     LoginHandler,
     LogoutHandler,
+    PostHandler,
     NoDestinationHandler,
 )
 
@@ -20,6 +21,7 @@ handlers = [
     (r"/blog/?(\d+)?/?", BlogHandler),
     (r"/about/?", AboutHandler),
     (r"/compose/?(\S+)?/?", ComposeHandler),
+    (r"/post/(\S+)/?", PostHandler),
     (r"/admin/login", LoginHandler),
     (r"/admin/logout", LogoutHandler),
     # (r"/archive/(?<archive_id>d+)", ArchiveHandler),

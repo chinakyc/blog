@@ -1,0 +1,84 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- +++++ Post +++++ -->
+  <div id="grey">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <p><img src="{{(post.author.avatar(100))}}" class="img-circle"> <ba>{{post.author.nickname}}</ba></p>
+          <p><bd>{% raw momentjs(post.create_time).calendar() %}</bd></p>
+          {% if post.modified_time != post.create_time %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
+          {% if current_user  %}
+            <p class="text-figth"><a href="/compose/{{post.title}}">#Edit</a></p>
+          {% end %}
+          <h4>{{post.title}}</h4>
+          <p>{% raw post.content %}</p>
+          <br>
+          <hr>
+          <p><a href="/blog"># Back</a></p>
+        </div>
+      </div><!-- /row -->
+    </div> <!-- /container -->
+  </div><!-- /white -->
+  {% if post.comments.__len__() >= 1 %}
+  <div id='white'>
+    <div class="container", id="comment">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          {% for comment in post.comments %}
+            <table class="table table-hover">
+              <tr>
+                <td width="50px"><img src="{{comment.avatar(50)}}" class="img-circle" /></td>
+                <td>
+                    <p>{{comment.author_name}} said on {% raw momentjs(comment.create_time).fromNow() %}</p>
+                    <p>{% raw comment.content %}</p>
+                   </td>
+                   <td>
+                     <p class="text-right">#{{post.comments.index(comment)}}</p>
+                   </td>
+                 </tr>
+               </table>
+               {% end %}
+        </div>
+      </div>
+    </div>
+      
+  </div>
+  {% end %}
+  <div id='grey'>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+          <h3>Leave a Comment:</h3>
+          <form action="{{ request.path }}" method = "post" class = "class="well"" >
+            {% module xsrf_form_html() %}
+            {% raw form.author_name(placeholder="Your Name *", class_="form-control") %} 
+            {% for error in form.errors.get("author_name", []) %}
+              <span class="help-inline">{{error}}</span><br>
+            {% end %}
+            <br>
+              {% raw form.author_email(placeholder="Your Email*", class_="form-control") %}
+            {% for error in form.errors.get("author_email", []) %}
+              <span class="help-inline">{{error}}</span><br>
+            {% end %}
+            <br>
+            {% raw form.author_url(placeholder="Your site", class_="form-control") %}
+            {% for error in form.errors.get("email", []) %}
+              <span class="help-inline">{{error}}</span><br>
+            {% end %}
+            <br>
+            {% raw form.content(placeholder="Enter markdown here *", class_="form-control", rows=6) %}
+            {% for error in form.errors.get("content", []) %}
+               <span class="help-inline">{{error}}</span><br>
+            {% end %}
+            <br>
+            <button type="submit" class="btn btn-success">SUBMIT</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% end %}
