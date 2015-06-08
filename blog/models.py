@@ -12,7 +12,7 @@ from libs.document import Custom_Document
 from mongoengine import connect, CASCADE
 from mongoengine.fields import (StringField, DateTimeField, EmbeddedDocument,
                                 IntField, EmailField, EmbeddedDocumentField,
-                                ReferenceField, BooleanField, ListField)
+                                ReferenceField, ListField)
 
 # connect
 connect('blogtest')
@@ -63,7 +63,9 @@ class Comment(EmbeddedDocument):
     author_email = EmailField(required=True, max_length=50)
     author_url = StringField(max_length=100)
     create_time = DateTimeField(default=datetime.datetime.utcnow())
-    isVisible = BooleanField(default=True)
+
+    def avatar(self, size):
+        return avatar(self.author_email, size)
 
     def __repr__(self):
         return '<Comment %r>' % (self.create_time)

@@ -15,3 +15,12 @@ class ComposeForm(Form):
     markdown = TextAreaField('markdown')
     tags = TextField('tags', validators=[Required()])
     category = TextField('category', validators=[Required()])
+
+
+class CommentForm(Form):
+    content = TextAreaField('content', validators=[Required(), ])
+    author_email = TextField('email', validators=[Required(),
+                                                  Length(1, 100), Email()])
+    author_name = TextField('name', validators=[Required(),
+                                                Length(1, 100)])
+    author_url = TextField('author_url')
