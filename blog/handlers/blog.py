@@ -73,6 +73,7 @@ class PostHandler(MainHandler):
             raise tornado.web.HTTPError(404)
         if self.form.validate():
             comment = Comment()
+            comment.create_time = datetime.utcnow()
             comment.author_name = self.form.author_name.data
             comment.author_email = self.form.author_email.data
             comment.author_url = self.form.author_url.data
@@ -127,6 +128,7 @@ class ComposeHandler(MainHandler):
                 post.modified_time = datetime.utcnow()
             else:
                 post = Post()
+                post.create_time = datetime.utcnow()
 
             title = self.form.title.data.replace(' ', '-')
             content = markdown2.markdown(

@@ -9,7 +9,7 @@
         <div class="col-lg-8 col-lg-offset-2">
           <p><img src="{{(post.author.avatar(100))}}" class="img-circle"> <ba>{{post.author.nickname}}</ba></p>
           <p><bd>{% raw momentjs(post.create_time).calendar() %}</bd></p>
-          {% if post.modified_time != post.create_time %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
+          {% if post.modified_time  %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
           {% if current_user  %}
             <p class="text-figth"><a href="/compose/{{post.title}}">#Edit</a></p>
           {% end %}

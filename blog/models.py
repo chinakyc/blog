@@ -4,7 +4,7 @@
     models
 """
 import bcrypt
-import datetime
+# import datetime
 import tornado.gen
 from avatar import avatar
 # from functools import partial
@@ -32,7 +32,7 @@ class User(Custom_Document):
     password_hash = StringField(max_length=200, required=True)
     about_me = StringField(max_length=200)
     skills = ListField(EmbeddedDocumentField(Skill))
-    last_seen = DateTimeField(default=datetime.datetime.utcnow())
+    last_seen = DateTimeField(required=True)
 
     @property
     def password(self):
@@ -62,7 +62,7 @@ class Comment(EmbeddedDocument):
     author_name = StringField(required=True, max_length=20)
     author_email = EmailField(required=True, max_length=50)
     author_url = StringField(max_length=100)
-    create_time = DateTimeField(default=datetime.datetime.utcnow())
+    create_time = DateTimeField(required=True)
 
     def avatar(self, size):
         return avatar(self.author_email, size)
@@ -86,8 +86,8 @@ class Post(Custom_Document):
     category = ReferenceField(Category, reverse_delete_rule=CASCADE)
     comments = ListField(EmbeddedDocumentField(Comment))
     tags = ListField(StringField(max_length=50))
-    create_time = DateTimeField(default=datetime.datetime.utcnow())
-    modified_time = DateTimeField(default=datetime.datetime.utcnow())
+    create_time = DateTimeField(required=True)
+    modified_time = DateTimeField()
 
     def __repr__(self):
         return '<Post %r>' % (self.title)

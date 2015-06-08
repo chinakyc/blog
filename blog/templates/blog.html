@@ -21,7 +21,7 @@
                  <p class="text-right">comments {{ post.comments.__len__() }}</p>
                {% end %}
                <p><a href="/post/{{post.title}}">Continue Reading...</a></p>   
-               {% if post.modified_time != post.create_time %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
+               {% if post.modified_time %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
                <hr>
              </div>
            </div><!-- /row -->
