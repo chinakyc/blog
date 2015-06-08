@@ -3,6 +3,7 @@
     ~~~~~~~
     base for handlers
 """
+import re
 import uuid
 import threading
 import tornado.web
@@ -26,6 +27,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
     _flash_msg_box = defaultdict(list)
     _flash_lock = threading.Lock()
+    _re_html_tags = re.compile(r"<\w+.*?>|<\/\w+>")
+    _re_html_img_tag = re.compile(r'<img\ src="(.*?)"\ \/>')
 
     def __init__(self, application, request, **kwargs):
         super().__init__(application, request, **kwargs)
@@ -73,6 +76,7 @@ class BaseHandler(tornado.web.RequestHandler):
             'get_flashed_messages': self.get_flashed_messages,
             'momentjs': momentjs,
             'g': self.g,
+            'html2text': self.html2text
         })
         return namespace
 
@@ -142,6 +146,19 @@ class BaseHandler(tornado.web.RequestHandler):
             if with_categories:
                 return iter(messages)
             return (m.msg for m in messages)
+
+    def html2text(self, html):
+        """Remove Html tags"""
+
+        # to complete incomplete tag
+        html += '>'
+        # In my case, may have single image posts, so convert img tag to
+        # meaingful content is comfortable
+        html = self._re_html_tags.sub(
+            '', self._re_html_img_tag.sub('[图片]', html))
+        if html.endswith('>'):
+            return html[:-1]
+        return html
 
     def write_error(self, status_code, **kwargs):
         if self.settings.get('debug'):
