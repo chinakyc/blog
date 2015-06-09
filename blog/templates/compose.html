@@ -3,15 +3,6 @@
 
 {% block content %}
   <!-- +++++ Post +++++ -->
-  <script charset="utf-8" src="/static/kindeditor/kindeditor-min.js"></script>
-  <script charset="utf-8" src="/static/kindeditor/zh_CN.js"></script>
-  <script charset="utf-8" src="/static/js/bootstrap-wysiwyg.js"></script>
-  <script>
-    var editor;
-    KindEditor.ready(function(K){
-        editor = K.create('#editor_id');
-    });
-  </script>
   <div id='grey'>
     <div class="container">
       <div class="row">
@@ -23,12 +14,16 @@
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>
-            {% raw form.content(placeholder="text", class_ = "form-control", id = "editor_id",rows="10") %}
+            <!-- {% raw form.content(placeholder="text", class_ = "form-control", id = "editor_id",rows="10") %}
             {% for error in form.errors.get('content', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
+            --!>
             <br>
-            {% raw form.markdown(placeholder="markdown", class_ = "form-control", id = "editor_id",rows="10") %}
+            <div id="editormd">
+                {% raw form.markdown(class_="form-control", style="display:none;", rows="30") %}
+                {% raw form.content(class_="editormd-html-textarea") %}
+            </div>
             {% for error in form.errors.get('markdown', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}

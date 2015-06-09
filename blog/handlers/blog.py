@@ -3,7 +3,6 @@
     ~~~~~~~
     blog handlers
 """
-import markdown2
 import tornado.web
 from tornado import gen
 from datetime import datetime
@@ -18,6 +17,7 @@ __all__ = ["MainHandler", "IndexHandler", "BlogHandler", "AboutHandler",
 
 
 class MainHandler(BaseHandler):
+
     def before_request(self):
         # Because all of the pages need `owner`, so save `owner` in g.
         self.g.owner = User.objects.get(nickname=self.settings['owner'])
@@ -77,9 +77,7 @@ class PostHandler(MainHandler):
             comment.author_name = self.form.author_name.data
             comment.author_email = self.form.author_email.data
             comment.author_url = self.form.author_url.data
-            comment.content = markdown2.markdown(
-                self.form.content.data, extras=[
-                    "fenced-code-blocks", "pyshell"])
+            comment.content = self.form.content.data
             post.comments.append(comment)
             yield post.save()
             self.flash("评论提交成功~")
@@ -131,10 +129,7 @@ class ComposeHandler(MainHandler):
                 post.create_time = datetime.utcnow()
 
             title = self.form.title.data.replace(' ', '-')
-            content = markdown2.markdown(
-                self.form.markdown.data, extras=[
-                    "fenced-code-blocks", "footnotes", "pyshell", "tables"]) if \
-                self.form.markdown.data else self.form.content.data
+            content = self.form.content.data
             markdown_text = self.form.markdown.data
             category = yield Category.asyncQuery().filter(
                 name=self.form.category.data).first()
