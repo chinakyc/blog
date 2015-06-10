@@ -28,6 +28,11 @@
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>
+            {% raw form.time(placeholder="2012-12-21-10-8", class_ = "form-control") %}
+            {% for error in form.errors.get('time', []) %}
+              <span class="help-inline">{% raw error %}</span><br>
+            {% end %}
+            <br>
             {% raw form.tags(placeholder="tags,web,http,", class_ = "form-control") %}
             {% for error in form.errors.get('tags', []) %}
               <span class="help-inline">{% raw error %}</span><br>
@@ -37,6 +42,7 @@
             {% for error in form.errors.get('category', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
+            <br>
             <button type="submit" class="btn btn-success">SUBMIT</button>
           </form>
         </div>

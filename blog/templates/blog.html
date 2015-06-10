@@ -10,7 +10,7 @@
              <div class="col-lg-8 col-lg-offset-2">
                <p><a href="/about"><img src="{{post.author.avatar(70)}}" alt="{{post.author.nickname}}" class="img-circle"></a><ba><a href="/about">{{post.author.nickname}}</a></ba></p>
                <p>{% raw momentjs(post.create_time).calendar() %}</p>
-               <h3>{{post.title.replace('-',' ')}}</h3>
+               <h2>{{post.title.replace('-',' ')}}</h2>
                {% if post.content.__len__() > 300 %}
                  <p> {{ html2text(post.content[:300]) }} ......</p>
                {% else %}

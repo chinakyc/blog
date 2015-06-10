@@ -126,11 +126,17 @@ class ComposeHandler(MainHandler):
                 post.modified_time = datetime.utcnow()
             else:
                 post = Post()
-                post.create_time = datetime.utcnow()
+                if self.form.time.data.find('-'):
+                    post.create_time = datetime(
+                        *map(int, self.form.time.data.split('-')))
+                else:
+                    post.create_time = datetime.utcnow()
 
             title = self.form.title.data.replace(' ', '-')
             content = self.form.content.data
             markdown_text = self.form.markdown.data
+            tags = self.form.tags.data.split(',') if\
+                self.form.tags.data.find(',') else []
             category = yield Category.asyncQuery().filter(
                 name=self.form.category.data).first()
             if not category:
@@ -142,7 +148,7 @@ class ComposeHandler(MainHandler):
             post.content = content
             post.markdown = markdown_text
             post.category = category
-            post.tags = self.form.tags.data.split(',')
+            post.tags = list(map(lambda t: t.strip(), tags))
             post.author = self.current_user
             yield post.save()
             self.flash("compose finsh!")

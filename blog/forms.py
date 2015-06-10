@@ -11,6 +11,7 @@ class LoginForm(Form):
 
 class ComposeForm(Form):
     title = TextField('title', validators=[Required(), Length(1, 200)])
+    time = TextField('time')
     content = TextAreaField('content')
     markdown = TextAreaField('markdown')
     tags = TextField('tags', validators=[Required()])
