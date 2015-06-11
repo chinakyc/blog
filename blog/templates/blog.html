@@ -5,40 +5,58 @@
   <!-- Posts Lists -->
   <div id="grey">
     <div class="container">
-       {% for post in posts.items%}
-           <div class="row">
-             <div class="col-lg-8 col-lg-offset-2">
-               <p><a href="/about"><img src="{{post.author.avatar(70)}}" alt="{{post.author.nickname}}" class="img-circle"></a><ba><a href="/about">{{post.author.nickname}}</a></ba></p>
-               <p>{% raw momentjs(post.create_time).calendar() %}</p>
-               <h2>{{post.title.replace('-',' ')}}</h2>
-               {% if post.content.__len__() > 300 %}
-                 <p> {{ html2text(post.content[:300]) }} ......</p>
-               {% else %}
-                 <p>{{ html2text(post.content) }} </p>
-               {% end %}
-               {% if post.comments %}
-                 <p class="text-right">comments {{ post.comments.__len__() }}</p>
-               {% end %}
-               <p><a href="/post/{{post.title}}">Continue Reading...</a></p>   
-               {% if post.modified_time %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
-               <hr>
-             </div>
-           </div><!-- /row -->
-       {% end %}
-       <div class="row">
-         <div class="col-lg-8 col-lg-offset-2">
-       {% if posts.has_prev %}
-       <a href="/blog/{{posts.prev_num}}"><< Newer posts </a>
-       {% else %}
-         << Newer posts
-       {% end %}
-       {% if posts.has_next %}
-       <p class="text-right"><a href="/blog/{{posts.next_num}}">Older post >> </a></p>
-       {% else %}
-          <p class="text-right">Older post >></p>
-       {% end %}
-         </div>
-       </div><!-- /row -->
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2" id="nav-tabs">
+          <ul class="nav nav-tabs">
+            {% if request.path.upper().find('ALL')  != -1%}
+              <li role="presentation" class="active"><a href="/blog/All">All</a></i>
+            {% else %}
+              <li role="presentation" ><a href="/blog/All">All</a></i>
+            {% end %}
+            {% for category in categorys %}
+              {% if request.path.find(category.name) != -1%}
+                <li role="presentation" class="active"><a href="/blog/{{ escape(category.name) }}">{{ escape(category.name) }}</a></i>
+              {% else %}
+                <li role="presentation" ><a href="/blog/{{ escape(category.name) }}">{{category.name}}</a></i>
+              {% end %}
+            {% end %}
+          </ul>
+        </div>
+      </div>
+      {% for post in posts.items%}
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2">
+            <p><a href="/about"><img src="{{post.author.avatar(70)}}" alt="{{post.author.nickname}}" class="img-circle"></a><ba><a href="/about">{{post.author.nickname}}</a></ba></p>
+            <p>{% raw momentjs(post.create_time).calendar() %}</p>
+            <h2>{{post.title.replace('-',' ')}}</h2>
+            {% if post.content.__len__() > 350 %}
+              <p> {{ html2text(post.content[:350]) }} ......</p>
+            {% else %}
+              <p>{{ html2text(post.content) }} </p>
+            {% end %}
+            {% if post.comments %}
+              <p class="text-right">comments {{ post.comments.__len__() }}</p>
+            {% end %}
+            <p><a href="/post/{{post.title}}">Continue Reading...</a></p>   
+            {% if post.modified_time %}<p class="text-right">Last modified at :{% raw momentjs(post.modified_time).fromNow() %}</p> {% end %}
+            <hr>
+          </div>
+        </div><!-- /row -->
+      {% end %}
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+      {% if posts.has_prev %}
+      <a href="/{{request.path}}/{{posts.prev_num}}"><< Newer posts </a>
+      {% else %}
+        << Newer posts
+      {% end %}
+      {% if posts.has_next %}
+      <p class="text-right"><a href="/{{request.path}}/{{posts.next_num}}">Older post >> </a></p>
+      {% else %}
+         <p class="text-right">Older post >></p>
+      {% end %}
+        </div>
+      </div><!-- /row -->
     </div> <!-- /container -->
   </div><!-- /grey -->
     

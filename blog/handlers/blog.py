@@ -3,7 +3,6 @@
     ~~~~~~~
     blog handlers
 """
-import pdb
 import tornado.web
 from tornado import gen
 from datetime import datetime
@@ -47,12 +46,30 @@ class IndexHandler(MainHandler):
 
 class BlogHandler(MainHandler):
     @gen.coroutine
-    def get(self, page):
+    def get(self, category, page):
         if not page:
             page = 1
-        posts = yield Post.asyncQuery().order_by("-create_time").paginate(
-            page=int(page), per_page=self.settings['per_page'])
-        self.render("blog.html", posts=posts)
+
+        if not category:
+            # Because of need `category` when template rendering.
+            # modify `request.paht` not very friendly
+            # so just redirect
+            return self.redirect('/blog/All')
+
+        if category.upper() == "ALL":
+            posts = yield Post.asyncQuery().order_by("-create_time").paginate(
+                page=int(page), per_page=self.settings['per_page'])
+        else:
+            c = yield Category.asyncQuery(name=category).first()
+            if not c:
+                raise tornado.web.HTTPError(404)
+            posts = yield Post.asyncQuery(
+                category=c).order_by("-create_time").paginate(
+                page=int(page), per_page=self.settings['per_page'])
+
+        categorys = yield Category.asyncQuery()
+
+        self.render("blog.html", posts=posts, categorys=categorys)
 
 
 class PostHandler(MainHandler):
@@ -62,16 +79,18 @@ class PostHandler(MainHandler):
 
     @gen.coroutine
     def get(self, title):
-        post = yield Post.asyncQuery().filter(title=title).first()
+        post = yield Post.asyncQuery(title=title).first()
         if not post:
             raise tornado.web.HTTPError(404)
         self.render("post.html", post=post, form=self.form)
 
     @gen.coroutine
     def post(self, title):
-        post = yield Post.asyncQuery().filter(title=title).first()
+        post = yield Post.asyncQuery(title=title).first()
+
         if not post:
             raise tornado.web.HTTPError(404)
+
         if self.form.validate():
             comment = Comment()
             comment.create_time = datetime.utcnow()
@@ -107,7 +126,7 @@ class ComposeHandler(MainHandler):
     @tornado.web.authenticated
     @gen.coroutine
     def get(self, title):
-        post = yield Post.asyncQuery().filter(title=title).first()
+        post = yield Post.asyncQuery(title=title).first()
         self.form.create_time.data = datetime.now()
         if post:
             self.form.title.data = post.title
@@ -122,8 +141,7 @@ class ComposeHandler(MainHandler):
     @gen.coroutine
     def post(self, title):
         if self.form.validate():
-            post = yield Post.asyncQuery().filter(
-                title=self.form.title.data).first()
+            post = yield Post.asyncQuery(title=self.form.title.data).first()
 
             if post:
                 post.modified_time = datetime.utcnow()
@@ -136,7 +154,7 @@ class ComposeHandler(MainHandler):
             markdown_text = self.form.markdown.data
             tags = self.form.tags.data.split(',') if\
                 self.form.tags.data.find(',') else []
-            category = yield Category.asyncQuery().filter(
+            category = yield Category.asyncQuery(
                 name=self.form.category.data).first()
             if not category:
                 category = Category()
@@ -173,8 +191,7 @@ class LoginHandler(MainHandler):
     @gen.coroutine
     def post(self):
         if self.form.validate():
-            user = yield User.asyncQuery().filter(
-                email=self.form.email.data).first()
+            user = yield User.asyncQuery(email=self.form.email.data).first()
             if user:
                 verify = yield user.verify_password(self.form.password.data)
                 if verify:
@@ -192,6 +209,7 @@ class LoginHandler(MainHandler):
 class LogoutHandler(MainHandler):
     def get(self):
         self.clear_cookie("user")
+        self.flash('已登出')
         self.redirect(self.get_argument("next", "/"))
 
 

@@ -28,8 +28,8 @@
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>
-            {% raw form.time(placeholder="2012-12-21-10-8", class_ = "form-control") %}
-            {% for error in form.errors.get('time', []) %}
+            {% raw form.create_time(placeholder="year-month-day t:m:s", class_ = "form-control") %}
+            {% for error in form.errors.get('create_time', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>

@@ -18,7 +18,7 @@ from handlers import (
 # tornado handlers
 handlers = [
     (r"/", IndexHandler),
-    (r"/blog/?(\d+)?/?", BlogHandler),
+    (r"/blog/?(\S+)?/?(\d+)?/?", BlogHandler),
     (r"/about/?", AboutHandler),
     (r"/compose/?(\S+)?/?", ComposeHandler),
     (r"/post/(\S+)/?", PostHandler),
