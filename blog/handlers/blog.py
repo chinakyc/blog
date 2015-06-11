@@ -4,6 +4,7 @@
     blog handlers
 """
 import re
+import markdown2
 import tornado.web
 from tornado import gen
 from datetime import datetime
@@ -74,6 +75,7 @@ class BlogHandler(MainHandler):
 
 
 class PostHandler(MainHandler):
+
     def __init__(self, *args,  **kwargs):
         super().__init__(*args, **kwargs)
         self.form = CommentForm(self.request.arguments)
@@ -98,7 +100,9 @@ class PostHandler(MainHandler):
             comment.author_name = self.form.author_name.data
             comment.author_email = self.form.author_email.data
             comment.author_url = self.form.author_url.data
-            comment.content = self.form.content.data
+            # Direct use user post data is unsafe,
+            # so we convert `org_markdown_text` in the back-end
+            comment.content = markdown2.markdown(self.form.content.data)
             post.comments.append(comment)
             yield post.save()
             self.flash("评论提交成功~")

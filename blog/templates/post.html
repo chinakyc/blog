@@ -71,8 +71,7 @@
             {% end %}
             <br>
             <div id="editormd">
-              <textarea class="editormd-markdown-textarea" name="$id-markdown-doc"></textarea>
-              {% raw form.content(class_="editormd-html-textarea") %}
+              {% raw form.content(class_="editormd-markdown-textarea") %}
             </div>
             {% for error in form.errors.get("content", []) %}
                <span class="help-inline">{{error}}</span><br>
