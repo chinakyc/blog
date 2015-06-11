@@ -3,6 +3,7 @@
     ~~~~~~~
     blog handlers
 """
+import pdb
 import tornado.web
 from tornado import gen
 from datetime import datetime
@@ -107,10 +108,12 @@ class ComposeHandler(MainHandler):
     @gen.coroutine
     def get(self, title):
         post = yield Post.asyncQuery().filter(title=title).first()
+        self.form.create_time.data = datetime.now()
         if post:
             self.form.title.data = post.title
             self.form.content.data = post.content
             self.form.markdown.data = post.markdown
+            self.form.create_time.data = post.create_time
             self.form.category.data = post.category.name
             self.form.tags.data = ','.join(post.tags)
         self.render("compose.html", form=self.form)
@@ -126,11 +129,7 @@ class ComposeHandler(MainHandler):
                 post.modified_time = datetime.utcnow()
             else:
                 post = Post()
-                if self.form.time.data.find('-'):
-                    post.create_time = datetime(
-                        *map(int, self.form.time.data.split('-')))
-                else:
-                    post.create_time = datetime.utcnow()
+                post.create_time = self.form.create_time.data.utcnow()
 
             title = self.form.title.data.replace(' ', '-')
             content = self.form.content.data
@@ -150,6 +149,7 @@ class ComposeHandler(MainHandler):
             post.category = category
             post.tags = list(map(lambda t: t.strip(), tags))
             post.author = self.current_user
+
             yield post.save()
             self.flash("compose finsh!")
             return self.redirect('/blog')

@@ -1,6 +1,6 @@
 from libs.wtforms import Form
 from wtforms.validators import Required, Email, Length
-from wtforms import TextField, BooleanField, TextAreaField
+from wtforms import TextField, BooleanField, TextAreaField, DateTimeField
 
 
 class LoginForm(Form):
@@ -11,7 +11,7 @@ class LoginForm(Form):
 
 class ComposeForm(Form):
     title = TextField('title', validators=[Required(), Length(1, 200)])
-    time = TextField('time')
+    create_time = DateTimeField('time')
     content = TextAreaField('content')
     markdown = TextAreaField('markdown')
     tags = TextField('tags', validators=[Required()])
