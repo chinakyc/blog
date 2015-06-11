@@ -3,6 +3,7 @@
     ~~~~~~~
     blog handlers
 """
+import re
 import tornado.web
 from tornado import gen
 from datetime import datetime
@@ -119,9 +120,20 @@ class AboutHandler(MainHandler):
 
 
 class ComposeHandler(MainHandler):
+    _re_tags_separator = re.compile(r'(\/|\\|\,|\ |\|){1,}')
+
     def __init__(self, *args,  **kwargs):
         super().__init__(*args, **kwargs)
         self.form = ComposeForm(self.request.arguments)
+
+    def separate_tags(self, tags_str):
+        # first,converted to lowercase and
+        # all of the separator is replaced with ` `
+        # second, strip repalced_str  (sometimes user input tags :"linux,")
+        # third, split with ` `
+        # more flexible than direct invoke `re.split`
+        return self._re_tags_separator.sub(
+            ' ', tags_str.lower()).strip().split()
 
     @tornado.web.authenticated
     @gen.coroutine
@@ -152,20 +164,19 @@ class ComposeHandler(MainHandler):
             title = self.form.title.data.replace(' ', '-')
             content = self.form.content.data
             markdown_text = self.form.markdown.data
-            tags = self.form.tags.data.split(',') if\
-                self.form.tags.data.find(',') else []
+            tags = self.separate_tags(self.form.tags.data)
             category = yield Category.asyncQuery(
                 name=self.form.category.data).first()
             if not category:
                 category = Category()
-                category.name = self.form.category.data
+                category.name = self.form.category.data.capitalize()
                 yield category.save()
 
             post.title = title
             post.content = content
             post.markdown = markdown_text
             post.category = category
-            post.tags = list(map(lambda t: t.strip(), tags))
+            post.tags = tags
             post.author = self.current_user
 
             yield post.save()
