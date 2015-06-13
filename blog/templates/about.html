@@ -16,38 +16,55 @@
   </div><!-- /ww -->
   
   
-  <!-- +++++ Information Section +++++ -->
-  
+  <!-- +++++ Information ection +++++ -->
+
   <div class="container pt">
-    <div class="row mt centered">  
-      <div class="col-lg-3">
+    <div class="row mt centered">
+      <div class="col-md-4">
         <span class="glyphicon glyphicon-book"></span>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+        <p>目前还是一名学生</p>
       </div>
-      
-      <div class="col-lg-3">
+
+      <div class="col-md-4">
         <span class="glyphicon glyphicon-user"></span>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+        <p>本人擅长解梦、看手相、面相、测前途、婚姻。大家可以叫我神算… 哈哈哈</p>
       </div>
 
-      <div class="col-lg-3">
-        <span class="glyphicon glyphicon-fire"></span>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+      <div class="col-md-4">
+        <span class="glyphicon glyphicon-star"></span>
+        <p>没有得到过值得一提的奖项π_π……</p>
       </div>
-
-      <div class="col-lg-3">
-        <span class="glyphicon glyphicon-globe"></span>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
-      </div>
+      </p>
     </div><!-- /row -->
-    
     <div class="row mt">
-      <div class="col-lg-6">
-        <h4>THE THINKING</h4>
-        <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
+      <div class="col-lg-8">
+          <h4>The Zen of Python</h4>
+        <blockquote>
+            <p>Beautiful is better than ugly.<br>
+            Explicit is better than implicit.<br>
+            Simple is better than complex.<br>
+            Complex is better than complicated.<br>
+            Flat is better than nested.<br>
+            Sparse is better than dense.<br>
+            Readability counts.<br>
+            Special cases aren’t special enough to break the rules.<br>
+            Although practicality beats purity.<br>
+            Errors should never pass silently.<br>
+            Unless explicitly silenced.<br>
+            In the face of ambiguity, refuse the temptation to guess.<br>
+            There should be one— and preferably only one —obvious way to do it.<br>
+            Although that way may not be obvious at first unless you’re Dutch.<br>
+            Now is better than never.<br>
+            Although never is often better than <em>right</em> now.<br>
+            If the implementation is hard to explain, it’s a bad idea.<br>
+            If the implementation is easy to explain, it may be a good idea.<br>
+            Namespaces are one honking great idea<br>
+            — let’s do more of those!<br>
+            — by Tim Peters
+            </p></blockquote>
       </div><!-- /colg-lg-6 -->
-      
-      <div class="col-lg-6">
+  
+      <div class="col-md-4">
         <h4>THE SKILLS</h4>
         {% if g.owner.skills %}
           {% for skill in g.owner.skills%}
@@ -64,5 +81,3 @@
   </div><!-- /container -->
 
 {% end %}
-  
-  
