@@ -136,14 +136,17 @@ class BaseHandler(tornado.web.RequestHandler):
         with BaseHandler._flash_lock:
             if category_filter is _no_value:
                 messages = BaseHandler._flash_msg_box[self._flash_id]
+                del BaseHandler._flash_msg_box[self._flash_id]
             else:
                 assert isinstance(category_filter, list), (
                     "arg `category_filter` should be a `list`")
-                messages = list(filter(lambda m: m.category in category_filter,
-                                BaseHandler._flash_msg_box[self._flash_id]))
-            BaseHandler._flash_msg_box[self._flash_id] = list(
-                set(messages) - set(BaseHandler._flash_msg_box[self._flash_id]))
+                messages = [m for m in BaseHandler._flash_msg_box[self._flash_id]
+                            if m.category in category_filter]
+                BaseHandler._flash_msg_box[self._flash_id] =\
+                    [m for m in BaseHandler._flash_msg_box[self._flash_id]
+                     if m.category not in category_filter]
             if with_categories:
+                # keep the return value's type as same as without categories
                 return iter(messages)
             return (m.msg for m in messages)
 
@@ -151,13 +154,13 @@ class BaseHandler(tornado.web.RequestHandler):
         """Remove Html tags"""
 
         # to complete incomplete tag
-        html += '>'
+        html += 'inc>'
         # In my case, may have single image posts, so convert img tag to
         # meaingful content is comfortable
         html = self._re_html_tags.sub(
             '', self._re_html_img_tag.sub('[图片]', html))
-        if html.endswith('>'):
-            return html[:-1]
+        if html.endswith('inc>'):
+            return html[:-4]
         return html
 
     def write_error(self, status_code, **kwargs):
