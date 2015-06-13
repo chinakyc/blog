@@ -9,19 +9,20 @@
     <link rel="shortcut icon" href="{{ g.owner.avatar(30) }}">
     <title>{{ handler.settings["blog_title"] }}</title>
     <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     {% if request.path.find('compose') != -1 or request.path.find('post') != -1 %}
     <link rel="stylesheet", href="/static/editor/editormd.min.css" />
     <link rel="stylesheet", href="/static/editor/editormd.logo.min.css" />
     <link rel="stylesheet", href="/static/editor/editormd.preview.min.css" />
     {% end %}
     {% if request.path.find('post') != -1 %}
-      <link href="http://cdn.bootcss.com/prettify/r298/prettify.min.css" rel="stylesheet">
+      <link href="/static/css/prettify.css" rel="stylesheet">
     {% end %}
     <!-- Custom styles for this template -->
     <link href="/static/css/main.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="/static/js/moment-with-langs.js"></script>
+    <script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/moment.js/2.5.1/moment-with-langs.min.js"></script>
+    <script src="http://cdn.bootcss.com/Chart.js/1.0.2/Chart.min.js"></script>
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -112,14 +113,13 @@
     <script type="text/javascript">
       $(window).load(function(){
                    $("pre").addClass("prettyprint");
-                        prettyPrint();
-                        })
+                   prettyPrint();
+      })
     </script>
     {% end %}
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/hover.zoom.js"></script>
     <script src="/static/js/hover.zoom.conf.js"></script>
-    <script src="/static/js/chart.js"></script>
     {% if request.path.find('compose') != -1 %}
     <script src="/static/editor/editormd.min.js"></script>
     <script type="text/javascript">

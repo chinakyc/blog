@@ -4,10 +4,10 @@
     blog handlers
 """
 import re
+import datetime
 import markdown2
 import tornado.web
 from tornado import gen
-from datetime import datetime
 from operator import itemgetter
 from handlers.base import BaseHandler
 from models import User, Post, Category, Comment
@@ -29,7 +29,7 @@ class MainHandler(BaseHandler):
         if not email:
             return None
         user = User.objects.get(email=email.decode())
-        user.last_seen = datetime.utcnow()
+        user.last_seen = datetime.datetime.utcnow()
         user.save()
         return user
 
@@ -67,17 +67,19 @@ class BlogHandler(MainHandler):
                 raise tornado.web.HTTPError(404)
             posts = yield Post.asyncQuery(
                 category=c).order_by("-create_time").paginate(
-                page=int(page), per_page=self.settings['per_page'])
+                    page=int(page), per_page=self.settings['per_page'])
 
         categorys = yield Category.asyncQuery()
 
-        self.render("blog.html", posts=posts, categorys=categorys)
+        self.render("blog.html",
+                    posts=posts,
+                    categorys=categorys,
+                    current_category=category)
 
 
 class PostHandler(MainHandler):
 
-    def __init__(self, *args,  **kwargs):
-        super().__init__(*args, **kwargs)
+    def initialize(self, *args,  **kwargs):
         self.form = CommentForm(self.request.arguments)
 
     @gen.coroutine
@@ -96,7 +98,7 @@ class PostHandler(MainHandler):
 
         if self.form.validate():
             comment = Comment()
-            comment.create_time = datetime.utcnow()
+            comment.create_time = datetime.datetime.utcnow()
             comment.author_name = self.form.author_name.data
             comment.author_email = self.form.author_email.data
             comment.author_url = self.form.author_url.data
@@ -125,10 +127,18 @@ class AboutHandler(MainHandler):
 
 class ComposeHandler(MainHandler):
     _re_tags_separator = re.compile(r'(\/|\\|\,|\ |\|){1,}')
+    _time_delta = datetime.timedelta(hours=8)
 
-    def __init__(self, *args,  **kwargs):
-        super().__init__(*args, **kwargs)
+    def initializei(self, *args,  **kwargs):
         self.form = ComposeForm(self.request.arguments)
+
+    def _UTC2BeiJingTime(self, time):
+        '''the server may be anywhere in the world,
+        so we manually adjust the time'''
+        return time + self._time_delta
+
+    def _BeiJing2UTCTime(self, time):
+        return time - self._time_delta
 
     def separate_tags(self, tags_str):
         # first,converted to lowercase and
@@ -143,8 +153,10 @@ class ComposeHandler(MainHandler):
     @gen.coroutine
     def get(self, title):
         post = yield Post.asyncQuery(title=title).first()
-        self.form.create_time.data = datetime.now()
+        self.form.create_time.data = \
+            self._UTC2BeiJingTime(datetime.datetime.utcnow())
         if post:
+            self.form.post_id.data = post.id
             self.form.title.data = post.title
             self.form.content.data = post.content
             self.form.markdown.data = post.markdown
@@ -157,13 +169,16 @@ class ComposeHandler(MainHandler):
     @gen.coroutine
     def post(self, title):
         if self.form.validate():
-            post = yield Post.asyncQuery(title=self.form.title.data).first()
+            post = None
 
+            if self.form.post_id.data:
+                post = yield Post.asyncQuery(id=self.form.post_id.data).first()
             if post:
-                post.modified_time = datetime.utcnow()
+                post.modified_time = datetime.datetime.utcnow()
             else:
                 post = Post()
-                post.create_time = self.form.create_time.data.utcnow()
+                post.create_time = \
+                    self._BeiJing2UTCTime(self.form.create_time.data)
 
             title = self.form.title.data.replace(' ', '-')
             content = self.form.content.data
@@ -190,8 +205,7 @@ class ComposeHandler(MainHandler):
 
 
 class LoginHandler(MainHandler):
-    def __init__(self, *args,  **kwargs):
-        super().__init__(*args, **kwargs)
+    def initialize(self, *args,  **kwargs):
         self.form = LoginForm(self.request.arguments)
 
     def before_request(self):

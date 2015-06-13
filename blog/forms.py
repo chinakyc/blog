@@ -10,6 +10,7 @@ class LoginForm(Form):
 
 
 class ComposeForm(Form):
+    post_id = TextField('post_id')
     title = TextField('title', validators=[Required(), Length(1, 200)])
     create_time = DateTimeField('time')
     content = TextAreaField('content')

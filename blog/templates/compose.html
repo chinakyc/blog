@@ -9,12 +9,13 @@
         <div class="col-lg-8 col-lg-offset-2">
             <form action="{{ request.path }}" method = "post" class="well"" >
             {% module xsrf_form_html() %}
-            {% raw form.title(placeholder="title", class_ = "form-control") %} 
+            {% raw form.post_id(type="hidden") %}
+            {% raw form.title(placeholder="title", class_="form-control") %} 
             {% for error in form.errors.get('title', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>
-            <!-- {% raw form.content(placeholder="text", class_ = "form-control", id = "editor_id",rows="10") %}
+            <!-- {% raw form.content(placeholder="text", class_="form-control", id="editor_id",rows="10") %}
             {% for error in form.errors.get('content', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
@@ -28,17 +29,17 @@
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>
-            {% raw form.create_time(placeholder="year-month-day t:m:s", class_ = "form-control") %}
+            {% raw form.create_time(placeholder="year-month-day t:m:s", class_="form-control") %}
             {% for error in form.errors.get('create_time', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>
-            {% raw form.tags(placeholder="tags,web,http,", class_ = "form-control") %}
+            {% raw form.tags(placeholder="tags,web,http,", class_="form-control") %}
             {% for error in form.errors.get('tags', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
             <br>
-            {% raw form.category(placeholder="category", class_ = "form-control") %}
+            {% raw form.category(placeholder="category", class_="form-control") %}
             {% for error in form.errors.get('category', []) %}
               <span class="help-inline">{% raw error %}</span><br>
             {% end %}
