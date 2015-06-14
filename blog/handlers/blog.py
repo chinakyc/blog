@@ -129,7 +129,7 @@ class ComposeHandler(MainHandler):
     _re_tags_separator = re.compile(r'(\/|\\|\,|\ |\|){1,}')
     _time_delta = datetime.timedelta(hours=8)
 
-    def initializei(self, *args,  **kwargs):
+    def initialize(self, *args,  **kwargs):
         self.form = ComposeForm(self.request.arguments)
 
     def _UTC2BeiJingTime(self, time):
