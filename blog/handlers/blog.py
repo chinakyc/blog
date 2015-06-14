@@ -184,11 +184,12 @@ class ComposeHandler(MainHandler):
             content = self.form.content.data
             markdown_text = self.form.markdown.data
             tags = self.separate_tags(self.form.tags.data)
+            category_str = self.form.category.data.capitalize()
             category = yield Category.asyncQuery(
-                name=self.form.category.data).first()
+                name=category_str).first()
             if not category:
                 category = Category()
-                category.name = self.form.category.data.capitalize()
+                category.name = category_str
                 yield category.save()
 
             post.title = title
