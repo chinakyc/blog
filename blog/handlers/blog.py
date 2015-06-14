@@ -132,12 +132,12 @@ class ComposeHandler(MainHandler):
     def initialize(self, *args,  **kwargs):
         self.form = ComposeForm(self.request.arguments)
 
-    def _UTC2BeiJingTime(self, time):
+    def UTC2BeiJingTime(self, time):
         '''the server may be anywhere in the world,
         so we manually adjust the time'''
         return time + self._time_delta
 
-    def _BeiJing2UTCTime(self, time):
+    def BeiJing2UTCTime(self, time):
         return time - self._time_delta
 
     def separate_tags(self, tags_str):
@@ -154,13 +154,14 @@ class ComposeHandler(MainHandler):
     def get(self, title):
         post = yield Post.asyncQuery(title=title).first()
         self.form.create_time.data = \
-            self._UTC2BeiJingTime(datetime.datetime.utcnow())
+            self.UTC2BeiJingTime(datetime.datetime.utcnow())
         if post:
             self.form.post_id.data = post.id
             self.form.title.data = post.title
             self.form.content.data = post.content
             self.form.markdown.data = post.markdown
-            self.form.create_time.data = post.create_time
+            self.form.create_time.data = \
+                self.UTC2BeiJingTime(post.create_time)
             self.form.category.data = post.category.name
             self.form.tags.data = ','.join(post.tags)
         self.render("compose.html", form=self.form)
@@ -178,7 +179,7 @@ class ComposeHandler(MainHandler):
             else:
                 post = Post()
                 post.create_time = \
-                    self._BeiJing2UTCTime(self.form.create_time.data)
+                    self.BeiJing2UTCTime(self.form.create_time.data)
 
             title = self.form.title.data.replace(' ', '-')
             content = self.form.content.data
