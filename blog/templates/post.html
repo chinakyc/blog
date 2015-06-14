@@ -33,19 +33,18 @@
               <tr>
                 <td width="50px"><img src="{{comment.avatar(50)}}" class="img-circle" /></td>
                 <td>
-                    <p>{{comment.author_name}} said on {% raw momentjs(comment.create_time).fromNow() %}</p>
-                    <p>{% raw comment.content %}</p>
-                   </td>
-                   <td>
-                     <p class="text-right">#{{post.comments.index(comment)}}</p>
-                   </td>
-                 </tr>
-               </table>
-               {% end %}
+                  <p>{{comment.author_name}} said on {% raw momentjs(comment.create_time).fromNow() %}</p>
+                  <p id="post_content">{% raw comment.content %}</p>
+                </td>
+                <td>
+                  <p class="text-right">#{{post.comments.index(comment)}}</p>
+                </td>
+              </tr>
+            </table>
+          {% end %}
         </div>
       </div>
     </div>
-      
   </div>
   {% end %}
   <div id='grey'>
