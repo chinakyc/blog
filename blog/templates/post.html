@@ -15,7 +15,7 @@
           {% end %}
           <hr>
           <h4>{{post.title}}</h4>
-          <p>{% raw post.content %}</p>
+          <p id="post_content">{% raw post.content %}</p>
           <br>
           <hr>
           <p><a href="/blog"># Back</a></p>
@@ -34,7 +34,7 @@
                 <td width="50px"><img src="{{comment.avatar(50)}}" class="img-circle" /></td>
                 <td>
                   <p>{{comment.author_name}} said on {% raw momentjs(comment.create_time).fromNow() %}</p>
-                  <p id="post_content">{% raw comment.content %}</p>
+                  <p>{% raw comment.content %}</p>
                 </td>
                 <td>
                   <p class="text-right">#{{post.comments.index(comment)}}</p>
