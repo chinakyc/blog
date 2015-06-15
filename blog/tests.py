@@ -76,17 +76,20 @@ class BaseHandlerTestCase(unittest.TestCase):
             for msg in will_flash_msg:
                 self._handler.flash(*msg)
 
+        # test got flashed_messages before `flash`
+        self.assertListEqual([], self._handler.get_flashed_messages())
+
         _setUp()
         # test got all flashed_messages without category
-        flashed_messages = list(self._handler.get_flashed_messages())
+        flashed_messages = self._handler.get_flashed_messages()
         self.assertListEqual(flashed_messages, [m for m, c in will_flash_msg])
-        self.assertListEqual(flashed_msg_box[flash_id], [])
+        self.assertNotIn(flash_id, flashed_msg_box)
 
         _setUp()
         # test got all flashed_messages with category
         msg_with_c = list(self._handler.get_flashed_messages(with_categories=True))
         self.assertListEqual(msg_with_c, will_flash_msg)
-        self.assertListEqual(flashed_msg_box[flash_id], [])
+        self.assertNotIn(flash_id, flashed_msg_box)
 
         _setUp()
         # test got all flashed_messages filter by category without category
