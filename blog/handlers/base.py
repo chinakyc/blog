@@ -111,10 +111,10 @@ class BaseHandler(tornado.web.RequestHandler):
         object, as shown in the solution (the _no_value variable)"
                                            --quote from python cookbook3 7.5
 
-        dummy `get_flashed_messages` like `get_flashed_messages` in flask
+        `get_flashed_messages` slightly different with `get_flashed_messages` in flask
 
-        Pulls all flased messages from the session and returns them. Futrther
-        calls in the same request to the function will return the same messages.
+        Pulls all flased messages from the cache and returns them in default.
+        When pass argument `category_filter`, the rest of the message will be retained.
         By default just a iter of messages are returned, but when
         with_categories is set to True, the return value will be a iter of
         namedtuple instead.
@@ -139,8 +139,7 @@ class BaseHandler(tornado.web.RequestHandler):
                 return []
 
             if category_filter is _no_value:
-                messages = BaseHandler._flash_msg_box[self._flash_id]
-                del BaseHandler._flash_msg_box[self._flash_id]
+                messages = BaseHandler._flash_msg_box.pop(self._flash_id)
             else:
                 assert isinstance(category_filter, list), (
                     "arg `category_filter` should be a `list`")
