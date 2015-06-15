@@ -125,15 +125,19 @@ class BaseHandler(tornado.web.RequestHandler):
         distnct
 
 
-        arg bool with_categories: controls whether categories are returned with
+        :arg bool with_categories: controls whether categories are returned with
             message text
-        arg list category_filter: filters the messages down to only those
+        :arg list category_filter: filters the messages down to only those
             matching the provided categories.
 
         """
         assert hasattr(self, "_flash_id"), ("should had `._flash_id`")
 
         with BaseHandler._flash_lock:
+            # To avoid unnecessary operation
+            if self._flash_id not in BaseHandler._flash_msg_box:
+                return []
+
             if category_filter is _no_value:
                 messages = BaseHandler._flash_msg_box[self._flash_id]
                 del BaseHandler._flash_msg_box[self._flash_id]
@@ -145,10 +149,10 @@ class BaseHandler(tornado.web.RequestHandler):
                 BaseHandler._flash_msg_box[self._flash_id] =\
                     [m for m in BaseHandler._flash_msg_box[self._flash_id]
                      if m.category not in category_filter]
+
             if with_categories:
-                # keep the return value's type as same as without categories
-                return iter(messages)
-            return (m.msg for m in messages)
+                return messages
+            return [m.msg for m in messages]
 
     def html2text(self, html):
         """Remove Html tags"""
