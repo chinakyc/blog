@@ -53,10 +53,7 @@ class BlogHandler(MainHandler):
             page = 1
 
         if not category:
-            # Because of need `category` when template rendering.
-            # modify `request.paht` not very friendly
-            # so just redirect
-            return self.redirect('/blog/All')
+            category = "All"
 
         if category.upper() == "ALL":
             posts = yield Post.asyncQuery().order_by("-create_time").paginate(
