@@ -54,5 +54,14 @@ settings = dict(
     debug=False,
 )
 
+# mail server settings
+MAIL_SERVER = "smtp.xxx.com"
+MAIL_PORT = 465
+MAIL_USERNAME = "xxxx@xx.com"
+MAIL_PASSWORD = "xxxxxx"
+
+# administrator list
+ADMINS = ["cca053@gmail.com", ]
+
 # executor_config
 EXECUTOR_NUM = 10
